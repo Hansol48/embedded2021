@@ -12,6 +12,5 @@ button.o: button.h, button.c
 led.0: led.h, led.o
 	arm-linux-gnueabi-gcc -c led.c -o led.o
 	
-
 clean : 
 	-rm *.o *.mod.c .*.cmd modules.order Module.symvers
