@@ -14,7 +14,11 @@
 #define HAVE_TO_FIND_1 "N: Name=\"ecube-button\"\n"
 #define HAVE_TO_FIND_2 "H: handlers=kbd event5"
 
-     
+int fd = 0;
+int buttonPath;
+int msgID;
+int buttonThFunc;
+
 int probeButtonPath(char *newPath)
 {
 	int returnValue = 0;
@@ -33,8 +37,8 @@ int probeButtonPath(char *newPath)
 		if(
 				(returnValue == 1) && (strncasecmp(tmpStr, HAVE_TO_FIND_2, strlen(HAVE_TO_FIND_2)) == 0))
 		{
-			prinft("-->%s", tmpStr);
-			printf("\t%c\r\n" tmpStr[strlen(tmpStr)-3]);
+			printf("-->%s", tmpStr);
+			printf("\t%c\r\n", tmpStr[strlen(tmpStr)-3]);
 			number = tmpStr[strlen(tmpStr)-3] - '0';
 			break;
 		}
@@ -51,7 +55,7 @@ int buttonInit(void)
 		return 0;
 	fd = open (buttonPath, O_RDONLY);
 	msgID = msgget (MESSAGE_ID, IPC_CREAT|0666);
-	pthread_creat(&buttonTh_id, NULL, buttonThFunc, NULL);
+	pthread_creat(buttonThFunc, NULL);
 	return 1;
 }
 
