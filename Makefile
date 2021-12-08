@@ -13,8 +13,6 @@ button.o: button.h button.c
 	arm-linux-gnueabi-gcc -c button.c -o button.o
 led.0: led.h led.o
 	arm-linux-gnueabi-gcc -c led.c -o led.o
-colorled.o: colorled.h colorled.c
-	arm-linux-gnueabi-gcc -c colorled.c -o colorled.o
 buzzer.o: buzzer.h buzzer.c
 	arm-linux-gnueabi-gcc -c buzzer.c -o buzzer.o
 fnd.o: fnd.c
