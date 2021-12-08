@@ -4,17 +4,10 @@ PWD := $(shell pwd)
 export ARCH=arm
 export CROSS_COMPILE=arm-linux.gnueabi-
 
-<<<<<<< HEAD
-all :libMyPeri.a
-libMyperi.a : button.o led.o buzzer.o fnd.o textlcd.o colorled.o
-	arm-linux-gnueabi-ar rc libMyPeri.a led.o button.o colorled.o buzzer.o fnd.o textlcd.o
-button.o: button.h button.c
-	arm-linux-gnueabi-gcc -c button.c -0 button.o
-led.0: led.h, led.o
-=======
+
 all :libMyperi.a
-libMyperi.a : button.o led.o
-	arm-linux-gnueabi-ar rc libMyperi.a led.o button.o
+libMyperi.a : button.o led.o colorled.o buzzer.o fnd.o textlcd.o
+	arm-linux-gnueabi-ar rc libMyperi.a led.o button.o colorled.o buzzer.o fnd.o textlcd.o
 button.o: button.h button.c
 	arm-linux-gnueabi-gcc -c button.c -o button.o
 led.0: led.h led.o
