@@ -3,24 +3,62 @@
 #include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <dirent.h>
 #include "buzzer.h"
 
-int fd = 0;
-char path[200];
+#define MAX_SCALE_STEP 8
+#define BUZZER_BASE_SYS_PATH "/sys/bus/platform/devices/"
+#define BUZZER_ENABLE_NAME "enable"
+#define BUZZER_FILENAME "peribuzzer"
+#define BUZZER_FREQUENCY_NAME "frequency"
 
-int buzzerInit (void)
+char gBuzzerBaseSysDir[128];
+const int musicScale[MAX_SCALE_STEP] = 
 {
-	fd=open (path, O_WRONLY);
-	if (fd = -1)
+	262, /*do*/294,330,349,392,440,494, /*si*/523
+};
+
+void buzzerEnable(int bEnable);
+void setFrequency(int frequency);
+void doHelp(void);
+
+DIR *dir_info;
+
+int buzzerInit()
+{
+	dir_info = opendir(BUZZER_BASE_SYS_PATH);
+	int ifNotFound = 1;
+	if(dir_info != NULL);
 	{
-		printf("Open error\n");
-		return 1;
+		while(1)
+		{
+			struct dirent *dir_entry;
+			dir_entry = readdir(dir_info);
+			if(dir_entry == NULL) break;
+			if(strncasecmp(BUZZER_FILENAME, dir_entry -> d_name, strlen(BUZZER_FILENAME)) ==0)
+			{
+				ifNotFound = 0;
+				sprintf(gBuzzerBaseSysDir, "%s%s/", BUZZER_BASE_SYS_PATH, dir_entry->d_name);
+			}
+		}
 	}
+		printf("find %s\n", gBuzzerBaseSysDir);
+
 }
 
 int buzzerPlaySong (int scale)
 {
-	buzzerEnable(1);
+	if (scale > MAX_SCALE_STEP)
+	{
+		printf(" <buzzerNo> over range \n");
+		doHelp();
+		return 1;
+	}
+	else
+	{
+		setFrequency(musicScale[scale -1]);
+		buzzerEnable(1);
+	}
 
 
 }
@@ -33,5 +71,34 @@ int buzzerStopSong (void)
 
 int buzzerExit (void)
 {
+	buzzerEnable(0);
+	close(dir_info);
+}
+
+void buzzerEnable(int bEnable)
+{
+	char path[200];
+	sprintf(path,"%s%s", gBuzzerBaseSysDir, BUZZER_ENABLE_NAME);
+	int fd = open(path, O_WRONLY);
+	if (bEnable) write(fd, &"1", 1);
+	else write(fd, &"0", 1);
 	close(fd);
+}
+
+void setFrequency(int frequency)
+{
+	char path[200];
+	sprintf(path, "%s%s", gBuzzerBaseSysDir, BUZZER_FREQUENCY_NAME);
+	int fd = open(path, O_WRONLY);
+	dprintf(fd, "%d", frequency);
+	close(fd);
+}
+
+void doHelp(void)
+{
+	printf("Usage:\n");
+	printf("buzzertest <buzzerNo> \n");
+	printf("buzzerNo : \n");
+	printf("do(1),re(2),me(3),fa(4),sol(5),ra(6),si(7),do(8)\n");
+	printf("off(0)\n");
 }
